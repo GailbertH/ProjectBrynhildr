@@ -10,6 +10,8 @@ public class LoadingManager : MonoBehaviour
 {
 	[SerializeField] private LoadingMeter loadingMeter;
 	[SerializeField] GameObject canvas;
+	[SerializeField] Camera mainCamera;
+
 	private AsyncOperation asyncLoading;
 	private AsyncOperation asyncUnloading;
 	private string sceneToLoad;
@@ -24,10 +26,12 @@ public class LoadingManager : MonoBehaviour
 	void Awake()
 	{
 		instance = this;
+		mainCamera.gameObject.SetActive (true);
 	}
 
 	private void SetUpLoadingMeter()
 	{
+		mainCamera.gameObject.SetActive (true);
 		loadingMeter.OnLoadMeterChange (this.OnLoadBarChange);
 		loadingMeter.OnLoadDone (this.OnLoadBarFull);
 	}
@@ -43,7 +47,8 @@ public class LoadingManager : MonoBehaviour
 
 		if (canvas != null)
 			canvas.SetActive (false);
-		
+
+		mainCamera.gameObject.SetActive (false);
 		asyncLoading.allowSceneActivation = true;
 
 		if(loadingRoutine != null)
@@ -79,7 +84,7 @@ public class LoadingManager : MonoBehaviour
 		if (canvas != null)
 			canvas.SetActive (true);
 
-		SetUpLoadingMeter ();
+		this.SetUpLoadingMeter ();
 		loadingMeter.Reset ();
 		unloadingRoutine = StartCoroutine (UnLoadAsyncScene ());
 		loadingRoutine = StartCoroutine (LoadAsynceScene(true));
