@@ -9,6 +9,7 @@ namespace Brynhildr.UI
 	{
 		[SerializeField] private Camera mainCamera;
 		[SerializeField] private GameJoyStick gameJoyStick;
+		[SerializeField] private Animation loadingScreen;
 
 		private static BrynhildrGameControls instance;
 		private ButtonType buttonType = ButtonType.NONE;
@@ -29,6 +30,11 @@ namespace Brynhildr.UI
 		public void ButtonClick(int butt)
 		{
 			buttonType = GameManager.Instance.ConvertToButtonType(butt);
+		}
+
+		public void AnimateLoadingScreen()
+		{
+			loadingScreen.Play ();
 		}
 
 		void Awake()

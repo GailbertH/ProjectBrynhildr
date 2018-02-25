@@ -25,7 +25,6 @@ namespace Brynhildr.Game
 		public override void Start ()
 		{
 			//Loading hahahaha
-			Manager.LoadingScreen.SetActive(true);
 			cdNextState = Manager.StartCoroutine (DelayedStateSwitch (2f));
 		}
 
@@ -47,7 +46,7 @@ namespace Brynhildr.Game
 		private IEnumerator DelayedStateSwitch (float delay)
 		{
 			yield return new WaitForSeconds(delay);
-			Manager.LoadingScreen.SetActive(false);
+			Manager.LoadingScreenPlay ();
 			GoToNextState ();
 		}
 	}
