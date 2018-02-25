@@ -356,7 +356,23 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.5012286
+        functionName: DamageTarget
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 4eb7f1b9257b0e945bb0c7247fe49a23,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.92383283
+        functionName: DamageTarget
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 4eb7f1b9257b0e945bb0c7247fe49a23,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -384,7 +400,39 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.25066668
+        functionName: AllowCombo
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 4eb7f1b9257b0e945bb0c7247fe49a23,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.658354
+        functionName: DamageTarget
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 4eb7f1b9257b0e945bb0c7247fe49a23,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 1
+        functionName: DoNotAllowCombo
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 4eb7f1b9257b0e945bb0c7247fe49a23,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 1
+        functionName: DamageTarget
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 4eb7f1b9257b0e945bb0c7247fe49a23,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

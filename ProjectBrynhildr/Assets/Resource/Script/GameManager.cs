@@ -20,7 +20,6 @@ namespace Brynhildr.Game
 	/// </summary>
 	public class GameManager : MonoBehaviour 
 	{
-		[SerializeField]private GameObject loadingScreen;
 		[SerializeField] private PlayerHandler player;
 
 		private static GameManager instance;
@@ -33,6 +32,11 @@ namespace Brynhildr.Game
 			get { return this.stateMachine; }
 		}
 
+		public PlayerHandler Player
+		{
+			get { return player; }
+		}
+
 		/// <summary>
 		/// Null Checker Req
 		/// </summary>
@@ -42,9 +46,10 @@ namespace Brynhildr.Game
 			get { return BrynhildrGameControls.Instance != null ? BrynhildrGameControls.Instance : null; }
 		}
 
-		public GameObject LoadingScreen
+		public void LoadingScreenPlay()
 		{
-			get { return this.loadingScreen; }
+			if (BrynhildrGameControls.Instance != null)
+				BrynhildrGameControls.Instance.AnimateLoadingScreen ();
 		}
 			
 		#region Monobehavior Function
