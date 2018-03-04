@@ -71,9 +71,12 @@ namespace Brynhildr.Enemy
 				PlayerHandler player = controller.Handler.GetPlayerList [i];
 				if (Vector3.Distance (player.GetPostion, controller.GetEnemyPosition) < 30f) 
 				{
-					if(controller.TargetPlayer == null)
+					if (controller.TargetPlayer == null) 
+					{
 						controller.TargetPlayer = player;
-					
+						controller.AggroMeterUpdate (player.GetPlayerID, 2);
+					}
+
 					Vector3 direction = player.GetPostion - controller.GetEnemyPosition;
 					direction.y = 0;
 					controller.transform.rotation = Quaternion.Slerp (controller.transform.rotation, Quaternion.LookRotation (direction), 0.1f);

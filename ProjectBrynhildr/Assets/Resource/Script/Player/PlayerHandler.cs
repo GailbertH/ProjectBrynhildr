@@ -14,6 +14,7 @@ namespace Brynhildr.Player
 		public const string COMBO = "Combo";
 		public const string VERTICAL = "Vertical";
 		public const string HORIZONTAL = "Horizontal";
+		public const string DEAD = "Dead";
 	}
 	
 	public class PlayerHandler : MonoBehaviour 
@@ -23,10 +24,10 @@ namespace Brynhildr.Player
 		[SerializeField] private CharacterController charController;
 		[SerializeField] private Animator playerAnimtor;
 		[SerializeField] private GameObject playerChar;
+		[SerializeField] public PlayerData playerData;
 
 		private float vertical = 0;
 		private float horizontal = 0;
-		private float speed = 0.4f;
 		private bool movementReset = true;
 		private bool attackReset = true;
 		private bool delayReseting = false;
@@ -34,6 +35,11 @@ namespace Brynhildr.Player
 		private bool allowCombo = false;
 
 		private Vector3 movement;
+
+		public int GetPlayerID
+		{
+			get{ return playerData.characterID; }
+		}
 
 		public List<PlayerHandler> GetPlayerCharacters
 		{
@@ -43,6 +49,11 @@ namespace Brynhildr.Player
 		public Vector3 GetPostion
 		{
 			get{ return playerChar.transform.position; }
+		}
+
+		private void CharacterSwitch()
+		{
+			
 		}
 
 		private void MovementReset()
@@ -67,7 +78,7 @@ namespace Brynhildr.Player
 
 		void FixedUpdate()
 		{
-			if(GameManager.Instance.GameControls!= null)
+			if(GameManager.Instance.GameControls!= null && playerData != null && playerData.characterID == 0)
 			{
 				if (GameManager.Instance.GameControls.OnJoyStickDrag) 
 				{
@@ -75,7 +86,7 @@ namespace Brynhildr.Player
 					horizontal = GameManager.Instance.GameControls.GetJoyStickHorizontal;
 					playerAnimtor.SetFloat (AnimParam.VERTICAL, vertical);
 					playerAnimtor.SetFloat (AnimParam.HORIZONTAL, horizontal);
-					movement = new Vector3 (horizontal * speed, 0, vertical * speed);
+					movement = new Vector3 (horizontal * playerData.SPD, 0, vertical * playerData.SPD);
 					CharacterRotater (movement);
 					MoveCharacter (movement);
 					movementReset = false;
@@ -115,7 +126,6 @@ namespace Brynhildr.Player
 		public void DoNotAllowCombo()
 		{
 			Invoke ("ComboDisable", 0.3f);
-			//ComboDisable();
 		}
 
 		private void ComboDisable()
@@ -130,10 +140,35 @@ namespace Brynhildr.Player
 			RaycastHit hitInfo;
 			if (Physics.Raycast (GetPostion, fwd, out hitInfo, 25)) 
 			{
-				if(hitInfo.collider.gameObject.GetComponent<EnemyController> () != null)
-					hitInfo.collider.gameObject.GetComponent<EnemyController> ().ReduceLife(1);
+				EnemyController enemy = hitInfo.collider.gameObject.GetComponent<EnemyController> ();
+				if (enemy != null)
+				{
+					enemy.ReduceLife (playerData.DMG);
+					enemy.AggroMeterUpdate(playerData.characterID, 1);
+				}
 				Debug.Log ("OUCH");
 			}
+		}
+
+		public void ReduceLife(int damage)
+		{
+			playerData.HP -= damage;
+			playerData.HP = Mathf.Clamp (playerData.HP, 0, playerData.BaseHP);
+			if (playerData.HP == 0) 
+			{
+				playerAnimtor.SetBool (AnimParam.DEAD, true);
+				if (GameManager.Instance.Enemies != null) 
+				{
+					GameManager.Instance.Enemies.RemoveEnemyTarget (playerData.characterID, playerData.HEAL);
+				}
+				Invoke ("Revive", 5);
+			}
+		}
+
+		public void Revive()
+		{
+			playerData.HP = Mathf.Clamp (playerData.BaseHP, 0, playerData.BaseHP);
+			playerAnimtor.SetBool (AnimParam.DEAD, false);
 		}
 
 		private void MoveCharacter(Vector3 move)

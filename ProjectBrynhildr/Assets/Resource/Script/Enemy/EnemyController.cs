@@ -47,7 +47,28 @@ namespace Brynhildr.Enemy
 		public PlayerHandler TargetPlayer
 		{
 			set { targetPlayer = value; }
-			get { return targetPlayer; }
+			get { return targetPlayer;  }
+		}
+
+		public void ForceChangeAggro(int ID, int forceValue = -1)
+		{
+			if (TargetPlayer != null && ID == TargetPlayer.GetPlayerID) 
+			{
+				enemyData.ForceSetAggro (ID, forceValue);
+				if (TargetPlayer.GetPlayerID != enemyData.GetHighestAggroID ()) 
+				{
+					TargetPlayer = handler.GetPlayerList [enemyData.GetHighestAggroID ()];
+				}
+			}
+		}
+
+		public void AggroMeterUpdate(int playerId, int aggroAdd)
+		{
+			enemyData.AddAggro (playerId, aggroAdd);
+			if (TargetPlayer != null && TargetPlayer.GetPlayerID != enemyData.GetHighestAggroID ())
+			{
+				TargetPlayer = handler.GetPlayerList [enemyData.GetHighestAggroID()];
+			}
 		}
 
 		public void ReduceLife(int damage)
@@ -76,9 +97,9 @@ namespace Brynhildr.Enemy
 			if (handler == null) 
 			{
 				handler = GetComponentInParent<EnemyHandler> ();
+				handler.AddEnemy (this);
+				enemyData.SetAggroTracker (handler.GetPlayerList.Count);
 			}
-			handler.AddEnemy (this);
-
 			enemyAnim = GetComponentInParent<Animator> ();
 			Debug.Log ("Enemy Start");
 			enemyState.Start(this);
@@ -152,10 +173,12 @@ namespace Brynhildr.Enemy
 		}
 		public void DamageTarget()
 		{
-			Vector3 direction = TargetPlayer.GetPostion - GetEnemyPosition;
-			if (direction.magnitude < 18) 
+			if (TargetPlayer != null) 
 			{
-				Debug.Log ("Enemy OUCH");
+				Vector3 direction = TargetPlayer.GetPostion - GetEnemyPosition;
+				if (direction.magnitude < 18) {
+					TargetPlayer.ReduceLife (1);
+				}
 			}
 		}
 	}

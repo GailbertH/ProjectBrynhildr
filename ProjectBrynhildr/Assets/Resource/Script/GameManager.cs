@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Brynhildr.Player;
 using Brynhildr.UI;
+using Brynhildr.Enemy;
 
 namespace Brynhildr.Game
 {
@@ -21,6 +22,7 @@ namespace Brynhildr.Game
 	public class GameManager : MonoBehaviour 
 	{
 		[SerializeField] private PlayerHandler player;
+		[SerializeField] private EnemyHandler enemies;
 
 		private static GameManager instance;
 		private BrynhildrStateMachine stateMachine;
@@ -35,6 +37,11 @@ namespace Brynhildr.Game
 		public PlayerHandler Player
 		{
 			get { return player; }
+		}
+
+		public EnemyHandler Enemies
+		{
+			get { return enemies; }
 		}
 
 		/// <summary>
