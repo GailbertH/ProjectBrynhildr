@@ -30,6 +30,14 @@ namespace Brynhildr.Enemy
 			get { return GetGameManager != null ? GetGameManager.Player.GetPlayerCharacters : null;}
 		}
 
+		public void RemoveEnemyTarget(int ID, int forceValue = 0)
+		{
+			for (int i = 0; i < enemyList.Count; i++) 
+			{
+				enemyList [i].ForceChangeAggro (ID, forceValue);
+			}
+		}
+
 		public void AddEnemy(EnemyController enemy)
 		{
 			enemyList.Add (enemy);
