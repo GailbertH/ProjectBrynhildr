@@ -24,8 +24,10 @@ namespace Brynhildr.Player
 		[SerializeField] private CharacterController charController;
 		[SerializeField] private Animator playerAnimtor;
 		[SerializeField] private GameObject playerChar;
+		[SerializeField] private GameObject cameraHolder;
 		[SerializeField] public PlayerData playerData;
 
+		private int characterInControl = 0;
 		private float vertical = 0;
 		private float horizontal = 0;
 		private bool movementReset = true;
@@ -51,9 +53,23 @@ namespace Brynhildr.Player
 			get{ return playerChar.transform.position; }
 		}
 
-		private void CharacterSwitch()
+		public void CharacterSwitch()
 		{
-			
+			characterInControl+=1;
+			if (PlayerList.Count <= characterInControl) 
+			{
+				characterInControl = 0;
+			}
+			for (int i = 0; i < PlayerList.Count; i++) 
+			{
+				if (characterInControl == playerData.characterID) 
+				{
+					if (cameraHolder != null) {
+						cameraHolder.transform.SetParent (PlayerList [i].charController.gameObject.transform);
+						cameraHolder.transform.localPosition = Vector3.zero;
+					}
+				}
+			}
 		}
 
 		private void MovementReset()
@@ -78,7 +94,7 @@ namespace Brynhildr.Player
 
 		void FixedUpdate()
 		{
-			if(GameManager.Instance.GameControls!= null && playerData != null && playerData.characterID == 0)
+			if(GameManager.Instance.GameControls!= null && playerData != null && playerData.characterID == characterInControl)
 			{
 				if (GameManager.Instance.GameControls.OnJoyStickDrag) 
 				{
