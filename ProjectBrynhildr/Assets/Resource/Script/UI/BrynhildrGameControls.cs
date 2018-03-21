@@ -57,6 +57,11 @@ namespace Brynhildr.UI
 			{
 				isDragging = false;
 			}
+
+			if (Input.GetKeyDown (KeyCode.Z))
+			{
+				GameManager.Instance.Player.CharacterSwitch ();
+			}
 		}
 		#endif
 
