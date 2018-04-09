@@ -103,24 +103,28 @@ public class LoadingManager : MonoBehaviour
 
 			while (!asyncLoading.isDone) 
 			{
-				Debug.Log(asyncLoading.progress + " + " + loadingProgress + " / " + (0.9f * sceneToLoadQueue.Length));
+				//Debug.Log(asyncLoading.progress + " + " + loadingProgress + " / " + (0.9f * sceneToLoadQueue.Length));
 				loadingMeter.MeterValue = Mathf.Clamp01 ((asyncLoading.progress + loadingProgress) / (0.9f * sceneToLoadQueue.Length));
-				Debug.Log (loadingMeter.MeterValue);
+				//Debug.Log (loadingMeter.MeterValue);
 				yield return null;
 			}
 		}
 		sceneToLoad = "";
 	}
-
+		
 	private IEnumerator UnLoadAsyncScene()
 	{
 		if (sceneToUnload != "") 
 		{
-			asyncUnloading = SceneManager.UnloadSceneAsync (this.sceneToUnload);
-
-			while (!asyncUnloading.isDone) 
+			string[] sceneToUnloadQueue = this.sceneToUnload.Split (',');
+			for (int i = 0; sceneToUnloadQueue.Length > i; i++) 
 			{
-				yield return null;
+				asyncUnloading = SceneManager.UnloadSceneAsync (sceneToUnloadQueue[i]);
+
+				while (!asyncUnloading.isDone) 
+				{
+					yield return null;
+				}
 			}
 			sceneToUnload = "";
 		}

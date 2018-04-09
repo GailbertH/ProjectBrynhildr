@@ -24,12 +24,20 @@ public class EnemyData
 	private int aggroValueCount = 50;
 	private bool aggroTrackerSet = false;
 
+	public void ResetAggroSystem()
+	{
+		for (int i = 0; i < aggroTracker.Count; i++) 
+		{
+			aggroTracker [i] = 0;
+		}
+	}
+
 	public void SetAggroTracker(int playerCount)
 	{
 		aggroTracker = new List<int>();
 		for (int i = 0; i < playerCount; i++) 
 		{
-			aggroTracker.Add (0);
+			aggroTracker.Add (1);
 		}
 		aggroTrackerSet = true;
 	}

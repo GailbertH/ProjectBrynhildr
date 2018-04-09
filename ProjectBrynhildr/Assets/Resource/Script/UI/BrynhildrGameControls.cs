@@ -32,6 +32,13 @@ namespace Brynhildr.UI
 			buttonType = GameManager.Instance.ConvertToButtonType(butt);
 		}
 
+		public void BackToMainMenu()
+		{
+			LoadingManager.Instance.SetSceneToUnload (SceneNames.GAME_UI + "," + SceneNames.GAME_SCENE);
+			LoadingManager.Instance.SetSceneToLoad (SceneNames.MAIN_MENU);
+			LoadingManager.Instance.LoadGameScene ();
+		}
+
 		public void AnimateLoadingScreen()
 		{
 			loadingScreen.Play ();

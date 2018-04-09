@@ -20,12 +20,8 @@ namespace Brynhildr.Player
 	public class PlayerHandler : MonoBehaviour 
 	{
 		//Player States
-		[SerializeField] private List<PlayerHandler> PlayerList;
-		[SerializeField] private CharacterController charController;
-		[SerializeField] private Animator playerAnimtor;
-		[SerializeField] private GameObject playerChar;
-		[SerializeField] private GameObject cameraHolder;
-		[SerializeField] public PlayerData playerData;
+		[SerializeField] private PlayerHandler PlayerList;
+		[SerializeField] public List<PlayerController> charControler;
 
 		private int characterInControl = 0;
 		private float vertical = 0;
@@ -38,35 +34,35 @@ namespace Brynhildr.Player
 
 		private Vector3 movement;
 
-		public int GetPlayerID
+		private PlayerController currChar()
 		{
-			get{ return playerData.characterID; }
+			int charId = Mathf.Clamp (characterInControl, 0, charControler.Count);
+			return charControler [charId];
 		}
 
-		public List<PlayerHandler> GetPlayerCharacters
+		public List<PlayerController> GetPlayerCharacters
 		{
-			get{ return  PlayerList; }
+			get{ return  charControler; }
 		}
 
-		public Vector3 GetPostion
+		public void CharacterSwitch(int IDofCharacter = 0, bool isForced = true)
 		{
-			get{ return playerChar.transform.position; }
-		}
-
-		public void CharacterSwitch()
-		{
-			characterInControl+=1;
-			if (PlayerList.Count <= characterInControl) 
+			if (isForced) {
+				characterInControl += 1;
+			} else
+				characterInControl = IDofCharacter;
+			
+			if (charControler.Count <= characterInControl) 
 			{
 				characterInControl = 0;
 			}
-			for (int i = 0; i < PlayerList.Count; i++) 
+			for (int i = 0; i < charControler.Count; i++) 
 			{
-				if (characterInControl == playerData.characterID) 
+				if (characterInControl == currChar().playerData.characterID) 
 				{
-					if (cameraHolder != null) {
-						cameraHolder.transform.SetParent (PlayerList [i].charController.gameObject.transform);
-						cameraHolder.transform.localPosition = Vector3.zero;
+					if (currChar().cameraHolder != null) {
+						currChar().cameraHolder.transform.SetParent (currChar().gameObject.transform);
+						currChar().cameraHolder.transform.localPosition = Vector3.zero;
 					}
 				}
 			}
@@ -76,15 +72,15 @@ namespace Brynhildr.Player
 		{
 			vertical = 0;
 			horizontal = 0;
-			playerAnimtor.SetFloat (AnimParam.VERTICAL, vertical);
-			playerAnimtor.SetFloat (AnimParam.HORIZONTAL, horizontal);
+			currChar().playerAnimtor.SetFloat (AnimParam.VERTICAL, vertical);
+			currChar().playerAnimtor.SetFloat (AnimParam.HORIZONTAL, horizontal);
 			movementReset = true;
 		}
 		private void AttackReset()
 		{
 			GameManager.Instance.GameControls.ButtonClick(0);
-			playerAnimtor.SetInteger (AnimParam.ACTION_TRACKER, 0);
-			playerAnimtor.SetBool (AnimParam.PERFORMING_ATTACK, false);
+			currChar().playerAnimtor.SetInteger (AnimParam.ACTION_TRACKER, 0);
+			currChar().playerAnimtor.SetBool (AnimParam.PERFORMING_ATTACK, false);
 			attackReset = true;
 			attackCombo = true;
 			delayReseting = false;
@@ -94,15 +90,18 @@ namespace Brynhildr.Player
 
 		void FixedUpdate()
 		{
-			if(GameManager.Instance.GameControls!= null && playerData != null && playerData.characterID == characterInControl)
+			if(GameManager.Instance.GameControls!= null 
+				&& currChar().playerData != null 
+				&& currChar().playerData.characterID == characterInControl)
 			{
+				ButtonType buttPressed = GameManager.Instance.GameControls.GetButtonClick;
 				if (GameManager.Instance.GameControls.OnJoyStickDrag) 
 				{
 					vertical = GameManager.Instance.GameControls.GetJoyStickVertical;
 					horizontal = GameManager.Instance.GameControls.GetJoyStickHorizontal;
-					playerAnimtor.SetFloat (AnimParam.VERTICAL, vertical);
-					playerAnimtor.SetFloat (AnimParam.HORIZONTAL, horizontal);
-					movement = new Vector3 (horizontal * playerData.SPD, 0, vertical * playerData.SPD);
+					currChar().playerAnimtor.SetFloat (AnimParam.VERTICAL, vertical);
+					currChar().playerAnimtor.SetFloat (AnimParam.HORIZONTAL, horizontal);
+					movement = new Vector3 (horizontal * currChar().playerData.SPD, 0, vertical * currChar().playerData.SPD);
 					CharacterRotater (movement);
 					MoveCharacter (movement);
 					movementReset = false;
@@ -111,32 +110,37 @@ namespace Brynhildr.Player
 				{
 					this.MovementReset ();
 				}
-				if (GameManager.Instance.GameControls.GetButtonClick != ButtonType.NONE && attackReset && !delayReseting)
+				Debug.Log (buttPressed.ToString ());
+				if (buttPressed != ButtonType.NONE && attackReset && !delayReseting) 
 				{
 					ButtonType buttType = GameManager.Instance.GameControls.GetButtonClick;
-					playerAnimtor.SetBool (AnimParam.PERFORMING_ATTACK, true);
-					playerAnimtor.SetInteger (AnimParam.ACTION_TRACKER, (int)buttType);
+					currChar ().playerAnimtor.SetBool (AnimParam.PERFORMING_ATTACK, true);
+					currChar ().playerAnimtor.SetInteger (AnimParam.ACTION_TRACKER, (int)buttType);
 					attackReset = false;
 					Debug.Log (buttType.ToString ());
 				} 
-				else if (GameManager.Instance.GameControls.GetButtonClick == ButtonType.NORMAL_ATTACK && allowCombo && attackCombo && !attackReset && !delayReseting) 
-				{
-					playerAnimtor.SetTrigger (AnimParam.COMBO);
+				else if (buttPressed == ButtonType.NORMAL_ATTACK && allowCombo && attackCombo && !attackReset && !delayReseting) {
+					currChar ().playerAnimtor.SetTrigger (AnimParam.COMBO);
 					attackCombo = false; 
 					Debug.Log ("Trigger");
+				} 
+				else if ((int)buttPressed >= (int)ButtonType.CHARACTER_CHANGE_1 &&
+					(int)buttPressed <= (int)ButtonType.CHARACTER_CHANGE_4) 
+				{
+					CharacterSwitch ((((int)buttPressed) - (int)ButtonType.CHARACTER_CHANGE_1), false);
 				}
-				else if(GameManager.Instance.GameControls.GetButtonClick != ButtonType.NONE && !attackReset && !delayReseting)
+				else if (buttPressed != ButtonType.NONE && !attackReset && !delayReseting) 
 				{
 					delayReseting = true;
 					Invoke ("AttackReset", 0.5f);
-				}
+				} 
 			}
 		}
 
 		public void AllowCombo()
 		{
 			allowCombo = true;
-			playerAnimtor.SetBool (AnimParam.ALLOW_COMBO, allowCombo);
+			currChar().playerAnimtor.SetBool (AnimParam.ALLOW_COMBO, allowCombo);
 		}
 
 		public void DoNotAllowCombo()
@@ -147,54 +151,39 @@ namespace Brynhildr.Player
 		private void ComboDisable()
 		{
 			allowCombo = false;
-			playerAnimtor.SetBool (AnimParam.ALLOW_COMBO, allowCombo);
+			currChar().playerAnimtor.SetBool (AnimParam.ALLOW_COMBO, allowCombo);
 		}
 
 		public void DamageTarget()
 		{
-			Vector3 fwd = playerChar.transform.TransformDirection(Vector3.forward);
+			Vector3 fwd = currChar().playerChar.transform.TransformDirection(Vector3.forward);
+			Vector3 curPos = currChar ().GetPostion;
+			curPos.y += 4;
 			RaycastHit hitInfo;
-			if (Physics.Raycast (GetPostion, fwd, out hitInfo, 25)) 
+			bool hitSomething = Physics.Raycast (curPos, fwd, out hitInfo, 25);
+			if (hitSomething) 
 			{
+				if(hitInfo.collider != null)
+					Debug.Log (hitInfo.collider.name);
+				
 				EnemyController enemy = hitInfo.collider.gameObject.GetComponent<EnemyController> ();
 				if (enemy != null)
 				{
-					enemy.ReduceLife (playerData.DMG);
-					enemy.AggroMeterUpdate(playerData.characterID, 1);
+					enemy.ReduceLife (currChar().playerData.DMG);
+					enemy.AggroMeterUpdate(currChar().playerData.characterID, 1);
 				}
 				Debug.Log ("OUCH");
 			}
 		}
 
-		public void ReduceLife(int damage)
-		{
-			playerData.HP -= damage;
-			playerData.HP = Mathf.Clamp (playerData.HP, 0, playerData.BaseHP);
-			if (playerData.HP == 0) 
-			{
-				playerAnimtor.SetBool (AnimParam.DEAD, true);
-				if (GameManager.Instance.Enemies != null) 
-				{
-					GameManager.Instance.Enemies.RemoveEnemyTarget (playerData.characterID, playerData.HEAL);
-				}
-				Invoke ("Revive", 5);
-			}
-		}
-
-		public void Revive()
-		{
-			playerData.HP = Mathf.Clamp (playerData.BaseHP, 0, playerData.BaseHP);
-			playerAnimtor.SetBool (AnimParam.DEAD, false);
-		}
-
 		private void MoveCharacter(Vector3 move)
 		{
-			charController.Move (move);
+			currChar().charController.Move (move);
 		}
 
 		private void CharacterRotater(Vector3 direc)
 		{
-			playerChar.transform.rotation = Quaternion.LookRotation (direc);
+			currChar().playerChar.transform.rotation = Quaternion.LookRotation (direc);
 		}
 	}
 }
