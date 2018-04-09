@@ -68,7 +68,7 @@ namespace Brynhildr.Enemy
 		{
 			for (int i = 0; i < controller.Handler.GetPlayerList.Count; i++) 
 			{
-				PlayerHandler player = controller.Handler.GetPlayerList [i];
+				PlayerController player = controller.Handler.GetPlayerList [i];
 				if (Vector3.Distance (player.GetPostion, controller.GetEnemyPosition) < 30f) 
 				{
 					if (controller.TargetPlayer == null) 
@@ -165,6 +165,7 @@ namespace Brynhildr.Enemy
 			controller.Anim.SetBool (EnemyAnimParam.MOVE, false);
 			controller.Anim.SetBool (EnemyAnimParam.DEATH, false);
 			isAttacking = false;
+			Debug.Log (controller.TargetPlayer.name);
 		}
 
 		public override void Update (EnemyController controller)
@@ -207,6 +208,7 @@ namespace Brynhildr.Enemy
 			controller.Anim.SetBool (EnemyAnimParam.DEATH, true);
 
 			controller.SetDelaySwithState (EnemyData.State.IDLE, 2);
+			controller.enemyData.ResetAggroSystem ();
 			controller.TargetPlayer = null;
 		}
 

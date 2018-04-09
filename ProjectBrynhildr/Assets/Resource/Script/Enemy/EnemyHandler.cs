@@ -25,7 +25,7 @@ namespace Brynhildr.Enemy
 			get { return GameManager.Instance; }
 		}
 
-		public List<PlayerHandler> GetPlayerList
+		public List<PlayerController> GetPlayerList
 		{
 			get { return GetGameManager != null ? GetGameManager.Player.GetPlayerCharacters : null;}
 		}

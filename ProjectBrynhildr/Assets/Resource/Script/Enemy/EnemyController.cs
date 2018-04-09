@@ -15,7 +15,7 @@ namespace Brynhildr.Enemy
 		private EnemyData.State currentStateType = EnemyData.State.NONE;
 		private EnemyData.State nextDelayStateType = EnemyData.State.NONE;
 		private EnemyState enemyState = null;
-		private PlayerHandler targetPlayer = null;
+		private PlayerController targetPlayer = null;
 		private Animator enemyAnim;
 
 		public int EnemyID
@@ -44,7 +44,7 @@ namespace Brynhildr.Enemy
 			get { return enemyState.GetCurrentState(); }
 		}
 
-		public PlayerHandler TargetPlayer
+		public PlayerController TargetPlayer
 		{
 			set { targetPlayer = value; }
 			get { return targetPlayer;  }
@@ -55,7 +55,7 @@ namespace Brynhildr.Enemy
 			if (TargetPlayer != null && ID == TargetPlayer.GetPlayerID) 
 			{
 				enemyData.ForceSetAggro (ID, forceValue);
-				if (TargetPlayer.GetPlayerID != enemyData.GetHighestAggroID ()) 
+				if (TargetPlayer.GetPlayerID != enemyData.GetHighestAggroID () && TargetPlayer.IsDead) 
 				{
 					TargetPlayer = handler.GetPlayerList [enemyData.GetHighestAggroID ()];
 				}
@@ -73,6 +73,8 @@ namespace Brynhildr.Enemy
 
 		public void ReduceLife(int damage)
 		{
+			Debug.Log (enemyData.life);
+			
 			if (enemyData.life < 0) 
 			{
 				SwitchState (EnemyData.State.DEATH);

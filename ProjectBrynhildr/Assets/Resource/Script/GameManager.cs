@@ -13,7 +13,11 @@ namespace Brynhildr.Game
 		NORMAL_ATTACK = 1,
 		SKILL_ONE = 2,
 		SKILL_TWO = 3,
-		CHANGE_CHAR = 4
+		CHANGE_CHAR = 4,
+		CHARACTER_CHANGE_1 = 5,
+		CHARACTER_CHANGE_2 = 6,
+		CHARACTER_CHANGE_3 = 7,
+		CHARACTER_CHANGE_4 = 8
 	}
 	/// <summary>
 	/// Handler of the whole gameplay
@@ -112,6 +116,18 @@ namespace Brynhildr.Game
 					break;
 				case 4:
 					buttType = ButtonType.CHANGE_CHAR;
+					break;
+				case 5:
+					buttType = ButtonType.CHARACTER_CHANGE_1;
+					break;
+				case 6:
+					buttType = ButtonType.CHARACTER_CHANGE_2;
+					break;
+				case 7:
+					buttType = ButtonType.CHARACTER_CHANGE_3;
+					break;
+				case 8:
+					buttType = ButtonType.CHARACTER_CHANGE_4;
 					break;
 				default:
 					buttType = ButtonType.NONE;
