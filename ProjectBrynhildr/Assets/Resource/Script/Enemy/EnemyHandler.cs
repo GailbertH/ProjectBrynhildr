@@ -29,6 +29,11 @@ namespace Brynhildr.Enemy
 		{
 			get { return GetGameManager != null ? GetGameManager.Player.GetPlayerCharacters : null;}
 		}
+			
+		public List<EnemyController> GetEnemyList
+		{
+			get{ return enemyList;}
+		}
 
 		public void RemoveEnemyTarget(int ID, int forceValue = 0)
 		{

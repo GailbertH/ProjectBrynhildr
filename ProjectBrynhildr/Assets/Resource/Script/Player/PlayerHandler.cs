@@ -34,7 +34,7 @@ namespace Brynhildr.Player
 
 		private Vector3 movement;
 
-		private PlayerController currChar()
+		public PlayerController currChar()
 		{
 			int charId = Mathf.Clamp (characterInControl, 0, charControler.Count);
 			return charControler [charId];
@@ -47,6 +47,9 @@ namespace Brynhildr.Player
 
 		public void CharacterSwitch(int IDofCharacter = 0, bool isForced = true)
 		{
+			if (IDofCharacter == characterInControl)
+				return;
+
 			if (isForced) {
 				characterInControl += 1;
 			} else
@@ -58,9 +61,12 @@ namespace Brynhildr.Player
 			}
 			for (int i = 0; i < charControler.Count; i++) 
 			{
-				if (characterInControl == currChar().playerData.characterID) 
+				charControler [i].SetCharacterMode (CharacterMode.AI);
+				if (i == currChar().playerData.characterID) 
 				{
-					if (currChar().cameraHolder != null) {
+					if (currChar().cameraHolder != null) 
+					{
+						charControler [i].SetCharacterMode (CharacterMode.CONTROLLING);
 						currChar().cameraHolder.transform.SetParent (currChar().gameObject.transform);
 						currChar().cameraHolder.transform.localPosition = Vector3.zero;
 					}
@@ -92,7 +98,7 @@ namespace Brynhildr.Player
 		{
 			if(GameManager.Instance.GameControls!= null 
 				&& currChar().playerData != null 
-				&& currChar().playerData.characterID == characterInControl)
+				&& currChar().CurrentMode == CharacterMode.CONTROLLING)
 			{
 				ButtonType buttPressed = GameManager.Instance.GameControls.GetButtonClick;
 				if (GameManager.Instance.GameControls.OnJoyStickDrag) 

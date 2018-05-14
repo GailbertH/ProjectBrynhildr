@@ -8,6 +8,16 @@ namespace Brynhildr.Player
 	[Serializable]
 	public class PlayerData 
 	{
+		public enum State
+		{
+			NONE = 0,
+			IDLE = 1,
+			PURSUIT = 2,
+			ATTACKING = 3,
+			DEATH = 4,
+			FOLLOW = 5
+		}
+
 		public int characterID;
 		public CharacterClass characterClass = CharacterClass.NONE;
 		public int BaseHP; 

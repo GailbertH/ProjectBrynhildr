@@ -24,6 +24,11 @@ namespace Brynhildr.Enemy
 			get{ return enemyID;}
 		}
 
+		public bool IsAlive 
+		{
+			get{ return enemyData.life > 0;}
+		}
+
 		public Vector3 GetEnemyPosition
 		{
 			get { return this.gameObject.transform.position; }
