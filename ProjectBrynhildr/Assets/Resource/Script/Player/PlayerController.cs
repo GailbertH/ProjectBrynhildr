@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Brynhildr.Game;
+using Brynhildr.Enemy;
 
 namespace Brynhildr.Player
 {
@@ -18,6 +19,23 @@ namespace Brynhildr.Player
 		[SerializeField] public GameObject playerChar;
 		[SerializeField] public GameObject cameraHolder;
 		[SerializeField] public PlayerData playerData;
+		private CharacterMode currentMode = CharacterMode.AI;
+
+		private Dictionary<PlayerData.State, PlayerState> states = new Dictionary<PlayerData.State, PlayerState> ();
+		private PlayerData.State currentStateType = PlayerData.State.NONE;
+		private PlayerData.State nextDelayStateType = PlayerData.State.NONE;
+		private PlayerState currentState = null;
+
+		public void SetCharacterMode(CharacterMode mode)
+		{
+			currentMode = mode;
+			Debug.Log (playerData.characterID + " " + mode.ToString ());
+		}
+
+		public CharacterMode CurrentMode
+		{
+			get { return currentMode; }
+		}
 
 		public int GetPlayerID
 		{
@@ -42,7 +60,6 @@ namespace Brynhildr.Player
 			}
 		}
 
-
 		public void ReduceLife(int damage)
 		{
 			playerData.HP -= damage;
@@ -57,5 +74,68 @@ namespace Brynhildr.Player
 				Invoke ("Revive", 5);
 			}
 		}
+
+		#region AI
+		private EnemyController targetPlayer = null;
+		public EnemyController TargetEnemy
+		{
+			set { targetPlayer = value; }
+			get { return targetPlayer;  }
+		}
+
+		void Start () 
+		{
+			states.Add (PlayerData.State.IDLE, 		(PlayerState)(new PlayerState_Idle ()));
+			states.Add (PlayerData.State.PURSUIT, 	(PlayerState)(new PlayerState_Pursuit ()));
+			states.Add (PlayerData.State.ATTACKING, (PlayerState)(new PlayerState_Attacking ()));
+			states.Add (PlayerData.State.DEATH,  	(PlayerState)(new PlayerState_Death ()));
+			states.Add (PlayerData.State.FOLLOW,  	(PlayerState)(new PlayerState_Follow ()));
+			currentState = states [PlayerData.State.IDLE];
+
+			if (playerData.characterID == GameManager.Instance.Player.currChar ().playerData.characterID)
+				this.currentMode = CharacterMode.CONTROLLING;
+
+			currentState.Start (this);
+		}
+
+		void FixedUpdate()
+		{         
+			if (currentMode == CharacterMode.CONTROLLING)
+				return;
+
+			if (states != null && currentState != null) 
+			{
+				currentState.Update (this);
+			}
+		}
+
+		public void SwitchState(PlayerData.State newStateType)
+		{
+			if (states != null && states.ContainsKey (newStateType) && currentState.GetCurrentState () != newStateType) 
+			{
+				currentState.End (this);
+				currentState = states [newStateType];
+				currentState.Start (this);
+
+				currentStateType = newStateType;
+			}
+		}
+
+		public void SetDelaySwithState(PlayerData.State newStateType, float delay = 0.5f)
+		{
+			nextDelayStateType = newStateType;
+			Invoke ("DelaySwitchState", delay);
+		}
+
+		public void DelaySwitchState()
+		{
+			if (nextDelayStateType != PlayerData.State.NONE) 
+			{
+				SwitchState (nextDelayStateType);
+				nextDelayStateType = PlayerData.State.NONE;
+			}
+		}
+
+		#endregion
 	}
 }

@@ -46,6 +46,7 @@ namespace Brynhildr.Game
 		private IEnumerator DelayedStateSwitch (float delay)
 		{
 			yield return new WaitForSeconds(delay);
+			SoundManager.Instance.PlayBGM ();
 			Manager.LoadingScreenPlay ();
 			GoToNextState ();
 		}
