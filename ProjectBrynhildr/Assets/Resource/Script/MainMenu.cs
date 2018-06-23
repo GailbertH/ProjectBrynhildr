@@ -6,9 +6,8 @@ public class MainMenu : MonoBehaviour
 {
 	public void StartGameClicked()
 	{
-		
 		LoadingManager.Instance.SetSceneToUnload (SceneNames.MAIN_MENU);
-		LoadingManager.Instance.SetSceneToLoad (SceneNames.GAME_UI + "," + SceneNames.GAME_SCENE);
+		LoadingManager.Instance.SetSceneToLoad (SceneNames.LOBBY_SCENE);
 		LoadingManager.Instance.LoadGameScene ();
 	}
 }
