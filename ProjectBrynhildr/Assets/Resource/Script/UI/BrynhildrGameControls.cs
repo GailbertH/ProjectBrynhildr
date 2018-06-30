@@ -34,9 +34,7 @@ namespace Brynhildr.UI
 
 		public void BackToMainMenu()
 		{
-			LoadingManager.Instance.SetSceneToUnload (SceneNames.GAME_UI + "," + SceneNames.GAME_SCENE);
-			LoadingManager.Instance.SetSceneToLoad (SceneNames.MAIN_MENU);
-			LoadingManager.Instance.LoadGameScene ();
+			GameManager.Instance.ExitGame ();
 		}
 
 		public void AnimateLoadingScreen()

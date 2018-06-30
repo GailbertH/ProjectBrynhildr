@@ -37,7 +37,9 @@ namespace Brynhildr.Game
 		}
 
 		public virtual void GoToNextState() {}
-		public virtual void Start () {}
+		public virtual void Start () {
+			Debug.Log (this.state.ToString ());
+		}
 		public virtual void Update () {}
 		public virtual void End () {}
 		public virtual void Destroy () 

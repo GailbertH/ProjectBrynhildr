@@ -12,7 +12,10 @@ namespace Brynhildr.Game
 			
 		public override void Start ()
 		{ 
-			//START UNLOADING 
+			//START UNLOADING
+			LoadingManager.Instance.SetSceneToUnload (SceneNames.GAME_UI + "," + SceneNames.GAME_SCENE);
+			LoadingManager.Instance.SetSceneToLoad (SceneNames.LOBBY_SCENE);
+			LoadingManager.Instance.LoadGameScene ();
 		}
 		public override void End () 
 		{ 

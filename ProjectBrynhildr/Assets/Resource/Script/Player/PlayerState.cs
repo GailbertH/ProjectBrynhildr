@@ -136,7 +136,6 @@ namespace Brynhildr.Player
 			}
 			else 
 			{
-				Debug.Log ("HI NERD");
 				startUpSpeed = 0.1f;
 				controller.SwitchState (PlayerData.State.IDLE);
 			}
