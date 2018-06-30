@@ -116,7 +116,7 @@ namespace Brynhildr.Player
 				{
 					this.MovementReset ();
 				}
-				Debug.Log (buttPressed.ToString ());
+				//Debug.Log (buttPressed.ToString ());
 				if (buttPressed != ButtonType.NONE && attackReset && !delayReseting) 
 				{
 					ButtonType buttType = GameManager.Instance.GameControls.GetButtonClick;

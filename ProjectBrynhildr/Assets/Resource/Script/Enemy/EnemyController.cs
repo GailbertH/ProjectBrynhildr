@@ -84,6 +84,7 @@ namespace Brynhildr.Enemy
 			{
 				SwitchState (EnemyData.State.DEATH);
 				enemyData.life = 10;
+				EnemySpawnerManager.Instance.StartSpawning ();
 			} 
 			else if (GetCurrentState != EnemyData.State.DEATH)
 			{

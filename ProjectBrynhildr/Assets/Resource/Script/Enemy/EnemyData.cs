@@ -5,6 +5,16 @@ using UnityEngine;
 [SerializeField]
 public class EnemyData
 {
+	public enum EnemyType
+	{
+		NONE = 0,
+		MELEE = 1,
+		RANGE = 2,
+		TANK = 3,
+		BOSS = 4,
+		SPECIAL = 5
+	}
+
 	public enum State
 	{
 		NONE = 0,
@@ -14,6 +24,7 @@ public class EnemyData
 		DEATH = 4,
 	}
 
+	public EnemyType enemyType = EnemyType.MELEE;
 	public int life = 10;
 	public List<int> aggroTracker = new List<int>();
 
