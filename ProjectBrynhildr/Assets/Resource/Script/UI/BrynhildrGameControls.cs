@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Brynhildr.Game;
+using UnityEngine.UI;
 
 namespace Brynhildr.UI
 {
@@ -10,6 +11,7 @@ namespace Brynhildr.UI
 		[SerializeField] private Camera mainCamera;
 		[SerializeField] private GameJoyStick gameJoyStick;
 		[SerializeField] private Animation loadingScreen;
+		[SerializeField] private Text gameResult;
 
 		private static BrynhildrGameControls instance;
 		private ButtonType buttonType = ButtonType.NONE;
@@ -40,6 +42,12 @@ namespace Brynhildr.UI
 		public void AnimateLoadingScreen()
 		{
 			loadingScreen.Play ();
+		}
+
+		public void GameResult(string result)
+		{
+			gameResult.text = result;
+			gameResult.gameObject.SetActive (!string.IsNullOrEmpty (result));
 		}
 
 		void Awake()

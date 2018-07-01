@@ -215,34 +215,6 @@ Prefab:
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 2085345374}
-    - target: {fileID: 1630215250992520, guid: ae322188bdc368343bc509490e46b3e9, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1044883316556638, guid: ae322188bdc368343bc509490e46b3e9, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1372235321208328, guid: ae322188bdc368343bc509490e46b3e9, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1678789518147014, guid: ae322188bdc368343bc509490e46b3e9, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1033650849875402, guid: ae322188bdc368343bc509490e46b3e9, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1120785865108078, guid: ae322188bdc368343bc509490e46b3e9, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1185782638329144, guid: ae322188bdc368343bc509490e46b3e9, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ae322188bdc368343bc509490e46b3e9, type: 2}
   m_IsPrefabParent: 0

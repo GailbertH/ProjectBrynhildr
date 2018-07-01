@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Brynhildr.MissionData;
 using Brynhildr.Game;
+using Brynhildr.UI;
 
 public class EnemySpawnerManager : MonoBehaviour 
 {
@@ -30,9 +31,10 @@ public class EnemySpawnerManager : MonoBehaviour
 
 	public void StartSpawning()
 	{
-		if(missionData.enemyGrid.Count > phaseController && routine == null)
-			routine = StartCoroutine (Spawner());
-		Debug.Log ("Routine Start");
+		if (missionData.enemyGrid.Count > phaseController && routine == null)
+			routine = StartCoroutine (Spawner ());
+		else if (missionData.enemyGrid.Count <= phaseController)
+			BrynhildrGameControls.Instance.GameResult ("You Win");
 	}
 
 	private IEnumerator Spawner()
