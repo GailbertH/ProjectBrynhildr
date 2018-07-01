@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Brynhildr.Player;
+using Brynhildr.Gate;
 
 namespace Brynhildr.Enemy
 {
@@ -48,6 +49,11 @@ namespace Brynhildr.Enemy
 		{
 			get { return enemyState.GetCurrentState(); }
 		}
+			
+		public GateController TargetGate
+		{
+			get { return GateHandler.Instance.GetCurrentActiveGate; }
+		}
 
 		public PlayerController TargetPlayer
 		{
@@ -55,6 +61,7 @@ namespace Brynhildr.Enemy
 			get { return targetPlayer;  }
 		}
 
+		//This could be death cause of death
 		public void ForceChangeAggro(int ID, int forceValue = -1)
 		{
 			if (TargetPlayer != null && ID == TargetPlayer.GetPlayerID) 
@@ -64,13 +71,21 @@ namespace Brynhildr.Enemy
 				{
 					TargetPlayer = handler.GetPlayerList [enemyData.GetHighestAggroID ()];
 				}
-			}
+			} 
 		}
 
 		public void AggroMeterUpdate(int playerId, int aggroAdd)
 		{
 			enemyData.AddAggro (playerId, aggroAdd);
 			if (TargetPlayer != null && TargetPlayer.GetPlayerID != enemyData.GetHighestAggroID ())
+			{
+				TargetPlayer = handler.GetPlayerList [enemyData.GetHighestAggroID()];
+			}
+		}
+
+		public void CheckAggro()
+		{
+			if (TargetPlayer == null)
 			{
 				TargetPlayer = handler.GetPlayerList [enemyData.GetHighestAggroID()];
 			}
@@ -83,8 +98,7 @@ namespace Brynhildr.Enemy
 			if (enemyData.life < 0) 
 			{
 				SwitchState (EnemyData.State.DEATH);
-				enemyData.life = 10;
-				EnemySpawnerManager.Instance.StartSpawning ();
+				//enemyData.life = 10;
 			} 
 			else if (GetCurrentState != EnemyData.State.DEATH)
 			{
@@ -132,6 +146,7 @@ namespace Brynhildr.Enemy
 				states.Clear ();
 				states = null;
 			}
+			Destroy (this.gameObject, 1);
 		}
 
 		public void SwitchState (EnemyData.State newStateType)
@@ -174,20 +189,24 @@ namespace Brynhildr.Enemy
 
 		public void AnimationStart()
 		{
+			
 		}
+
 		public void AnimationEnd()
 		{
 			enemyState.AnimateReset (this);
 		}
+
 		public void DamageTarget()
 		{
 			if (TargetPlayer != null) 
 			{
 				Vector3 direction = TargetPlayer.GetPostion - GetEnemyPosition;
-				if (direction.magnitude < 18) {
+				if (direction.magnitude < 18) 
+				{
 					TargetPlayer.ReduceLife (1);
 				}
-			}
+			} 
 		}
 	}
 }
