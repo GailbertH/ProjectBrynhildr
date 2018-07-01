@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Brynhildr.Player;
+using Brynhildr.Game;
 
 
 namespace Brynhildr.Enemy
@@ -62,10 +63,12 @@ namespace Brynhildr.Enemy
 			controller.Anim.SetBool (EnemyAnimParam.FLINCH, false);
 			controller.Anim.SetBool (EnemyAnimParam.MOVE, false);
 			controller.Anim.SetBool (EnemyAnimParam.DEATH, false);
+			controller.CheckAggro ();
 		}
 
 		public override void Update (EnemyController controller)
 		{
+			/*
 			for (int i = 0; i < controller.Handler.GetPlayerList.Count; i++) 
 			{
 				PlayerController player = controller.Handler.GetPlayerList [i];
@@ -82,7 +85,14 @@ namespace Brynhildr.Enemy
 					controller.transform.rotation = Quaternion.Slerp (controller.transform.rotation, Quaternion.LookRotation (direction), 0.1f);
 					DelayToPursuit (controller);
 				}
-			}
+			}*/
+			if (controller.TargetPlayer == null)
+				controller.CheckAggro ();
+
+			Vector3 direction = controller.TargetPlayer.GetPostion - controller.GetEnemyPosition;
+			direction.y = 0;
+			controller.transform.rotation = Quaternion.Slerp (controller.transform.rotation, Quaternion.LookRotation (direction), 0.1f);
+			DelayToPursuit (controller);
 		}
 
 		private void DelayToPursuit(EnemyController controller)
@@ -207,9 +217,16 @@ namespace Brynhildr.Enemy
 			controller.Anim.SetBool (EnemyAnimParam.MOVE, false);
 			controller.Anim.SetBool (EnemyAnimParam.DEATH, true);
 
+			/*
 			controller.SetDelaySwithState (EnemyData.State.IDLE, 2);
 			controller.enemyData.ResetAggroSystem ();
 			controller.TargetPlayer = null;
+			*/
+			GameManager.Instance.Enemies.GetEnemyList.Remove (controller);
+			if(GameManager.Instance.Enemies.GetEnemyList.Count <= 0)
+				EnemySpawnerManager.Instance.StartSpawning ();
+			
+			controller.Destroy ();
 		}
 
 		public override void Update (EnemyController controller)

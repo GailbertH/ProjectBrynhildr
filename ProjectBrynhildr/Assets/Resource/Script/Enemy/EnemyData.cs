@@ -48,7 +48,7 @@ public class EnemyData
 		aggroTracker = new List<int>();
 		for (int i = 0; i < playerCount; i++) 
 		{
-			aggroTracker.Add (1);
+			aggroTracker.Add (-1);
 		}
 		aggroTrackerSet = true;
 	}
@@ -134,6 +134,11 @@ public class EnemyData
 				}
 			}
 		}
+		if (HighestAggroID == -1)
+			HighestAggroID = Random.Range (0, aggroTracker.Count);
+
+		Debug.Log ("TARGET TARGET " + HighestAggroID);
+
 		return Mathf.Clamp (HighestAggroID, 0, aggroTracker.Count - 1);
 	}
 	#endregion
