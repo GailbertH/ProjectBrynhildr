@@ -17,6 +17,6 @@ public class SoundManager : MonoBehaviour
 
 	public void PlayBGM()
 	{
-		bgmClip.Play (22050);
+		//bgmClip.Play (22050);
 	}
 }

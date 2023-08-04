@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Brynhildr.Game;
 using Brynhildr.Enemy;
+using Brynhildr.UI;
 
 namespace Brynhildr.Player
 {
@@ -18,7 +19,7 @@ namespace Brynhildr.Player
 		[SerializeField] public Animator playerAnimtor;
 		[SerializeField] public GameObject playerChar;
 		[SerializeField] public GameObject cameraHolder;
-		[SerializeField] public PlayerData playerData;
+        [SerializeField] public PlayerData playerData;
 		private CharacterMode currentMode = CharacterMode.AI;
 
 		private Dictionary<PlayerData.State, PlayerState> states = new Dictionary<PlayerData.State, PlayerState> ();
@@ -29,8 +30,9 @@ namespace Brynhildr.Player
 		public void SetCharacterMode(CharacterMode mode)
 		{
 			currentMode = mode;
-			Debug.Log (playerData.characterID + " " + mode.ToString ());
-		}
+            //Debug.Log (playerData.characterID + " " + mode.ToString ());
+            UpdateHPUI();
+        }
 
 		public CharacterMode CurrentMode
 		{
@@ -51,12 +53,13 @@ namespace Brynhildr.Player
 		{
 			playerData.HP = Mathf.Clamp (playerData.BaseHP, 0, playerData.BaseHP);
 			playerAnimtor.SetBool (AnimParam.DEAD, false);
-		}
+            UpdateHPUI();
+        }
 
 		public bool IsDead
 		{
 			get{
-				return playerData.HP > 0;
+				return playerData.HP <= 0;
 			}
 		}
 
@@ -64,7 +67,7 @@ namespace Brynhildr.Player
 		{
 			playerData.HP -= damage;
 			playerData.HP = Mathf.Clamp (playerData.HP, 0, playerData.BaseHP);
-			if (playerData.HP <= 0) 
+			if (IsDead) 
 			{
 				playerAnimtor.SetBool (AnimParam.DEAD, true);
 				if (GameManager.Instance.Enemies != null) 
@@ -73,7 +76,14 @@ namespace Brynhildr.Player
 				}
 				Invoke ("Revive", 5);
 			}
-		}
+
+			UpdateHPUI();
+        }
+
+		private void UpdateHPUI()
+		{
+            BrynhildrGameControls.Instance.UpdateHP(GetPlayerID, playerData.HP);
+        }
 
 		#region AI
 		private EnemyController targetPlayer = null;

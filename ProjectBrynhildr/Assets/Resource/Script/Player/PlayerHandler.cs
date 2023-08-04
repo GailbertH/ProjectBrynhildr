@@ -40,41 +40,54 @@ namespace Brynhildr.Player
 			return charControler [charId];
 		}
 
+		public PlayerController GetCharacter(int charId)
+		{
+			return charControler[charId];
+        }
+
 		public List<PlayerController> GetPlayerCharacters
 		{
 			get{ return  charControler; }
 		}
 
-		public void CharacterSwitch(int IDofCharacter = 0, bool isForced = true)
+		public void CharacterSwitch()
 		{
-			if (IDofCharacter == characterInControl)
-				return;
-
-			if (isForced) {
-				characterInControl += 1;
-			} else
-				characterInControl = IDofCharacter;
+			int newCharacterToControl = characterInControl + 1;
 			
-			if (charControler.Count <= characterInControl) 
+			if (charControler.Count <= newCharacterToControl) 
 			{
-				characterInControl = 0;
+                newCharacterToControl = 0;
 			}
+
 			for (int i = 0; i < charControler.Count; i++) 
 			{
 				charControler [i].SetCharacterMode (CharacterMode.AI);
-				if (i == currChar().playerData.characterID) 
+				if (i == newCharacterToControl && currChar().cameraHolder != null) 
 				{
-					if (currChar().cameraHolder != null) 
-					{
-						charControler [i].SetCharacterMode (CharacterMode.CONTROLLING);
-						currChar().cameraHolder.transform.SetParent (currChar().gameObject.transform);
-						currChar().cameraHolder.transform.localPosition = Vector3.zero;
-					}
+					//Debug.Log("Switch " + newCharacterToControl);
+                    currChar().cameraHolder.transform.SetParent (GetPlayerCharacters[newCharacterToControl].charController.gameObject.transform);
+					currChar().cameraHolder.transform.localPosition = Vector3.zero;
+					GetPlayerCharacters[newCharacterToControl].cameraHolder = currChar().cameraHolder;
+                    currChar().cameraHolder = null;
+                    GetPlayerCharacters[newCharacterToControl].SetCharacterMode(CharacterMode.CONTROLLING);
 				}
 			}
+            characterInControl = newCharacterToControl;
+        }
+
+		private void Start()
+		{
+			for (int i = 0; i < charControler.Count; i++)
+			{
+                charControler[i].SetCharacterMode(CharacterMode.AI);
+				if (i == 0)
+				{
+					GetPlayerCharacters[i].SetCharacterMode(CharacterMode.CONTROLLING);
+				}
+            }
 		}
 
-		private void MovementReset()
+        private void MovementReset()
 		{
 			vertical = 0;
 			horizontal = 0;
@@ -101,7 +114,7 @@ namespace Brynhildr.Player
 				&& currChar().CurrentMode == CharacterMode.CONTROLLING)
 			{
 				ButtonType buttPressed = GameManager.Instance.GameControls.GetButtonClick;
-				if (GameManager.Instance.GameControls.OnJoyStickDrag) 
+				if (GameManager.Instance.GameControls.OnJoyStickDrag && currChar().IsDead == false) 
 				{
 					vertical = GameManager.Instance.GameControls.GetJoyStickVertical;
 					horizontal = GameManager.Instance.GameControls.GetJoyStickHorizontal;
@@ -117,30 +130,30 @@ namespace Brynhildr.Player
 					this.MovementReset ();
 				}
 				//Debug.Log (buttPressed.ToString ());
-				if (buttPressed != ButtonType.NONE && attackReset && !delayReseting) 
+				if (buttPressed != ButtonType.NONE && attackReset && !delayReseting && currChar().IsDead == false) 
 				{
 					ButtonType buttType = GameManager.Instance.GameControls.GetButtonClick;
 					currChar ().playerAnimtor.SetBool (AnimParam.PERFORMING_ATTACK, true);
-					currChar ().playerAnimtor.SetInteger (AnimParam.ACTION_TRACKER, (int)buttType);
+					currChar ().playerAnimtor.SetInteger (AnimParam.ACTION_TRACKER, (int)buttType != (int)ButtonType.CHANGE_CHAR ? (int)buttType : 0);
 					attackReset = false;
 					Debug.Log (buttType.ToString ());
 				} 
-				else if (buttPressed == ButtonType.NORMAL_ATTACK && allowCombo && attackCombo && !attackReset && !delayReseting) {
+				if (buttPressed == ButtonType.NORMAL_ATTACK && allowCombo && attackCombo && !attackReset && !delayReseting && currChar().IsDead == false) {
 					currChar ().playerAnimtor.SetTrigger (AnimParam.COMBO);
 					attackCombo = false; 
 					Debug.Log ("Trigger");
 				} 
-				else if ((int)buttPressed >= (int)ButtonType.CHARACTER_CHANGE_1 &&
-					(int)buttPressed <= (int)ButtonType.CHARACTER_CHANGE_4) 
+				else if (buttPressed == ButtonType.CHANGE_CHAR) 
 				{
-					CharacterSwitch ((((int)buttPressed) - (int)ButtonType.CHARACTER_CHANGE_1), false);
-				}
+					CharacterSwitch ();
+                }
 				else if (buttPressed != ButtonType.NONE && !attackReset && !delayReseting) 
 				{
 					delayReseting = true;
 					Invoke ("AttackReset", 0.5f);
-				} 
-			}
+				}
+                GameManager.Instance.GameControls.ButtonClick(0);
+            }
 		}
 
 		public void AllowCombo()

@@ -12,8 +12,11 @@ namespace Brynhildr.UI
 		[SerializeField] private GameJoyStick gameJoyStick;
 		[SerializeField] private Animation loadingScreen;
 		[SerializeField] private Text gameResult;
+		[SerializeField] private Text playerHP1;
+		[SerializeField] private Text playerHP2;
+        [SerializeField] private Text playerHP3;
 
-		private static BrynhildrGameControls instance;
+        private static BrynhildrGameControls instance;
 		private ButtonType buttonType = ButtonType.NONE;
 		private bool isDragging = false;
 
@@ -76,7 +79,37 @@ namespace Brynhildr.UI
 				GameManager.Instance.Player.CharacterSwitch ();
 			}
 		}
-		#endif
+#endif
 
-	}
+		public void UpdateHP(int id, int value)
+		{
+			if (id == 0)
+			{
+				UpdateP1HP(value);
+            }
+			else if (id == 1)
+			{
+                UpdateP2HP(value);
+            }
+			else if (id == 2)
+			{
+                UpdateP3HP(value);
+            }
+		}
+
+		private void UpdateP1HP(int value)
+		{
+			playerHP1.text = "P1 HP: " + value;
+		}
+
+        private void UpdateP2HP(int value)
+        {
+            playerHP2.text = "P2 HP: " + value;
+        }
+
+        private void UpdateP3HP(int value)
+        {
+            playerHP3.text = "P3 HP: " + value;
+        }
+    }
 }

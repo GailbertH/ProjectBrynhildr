@@ -32,7 +32,7 @@ namespace Brynhildr.Enemy
 
 		public Vector3 GetEnemyPosition
 		{
-			get { return this.gameObject.transform.position; }
+			get { return this != null ? this.gameObject.transform.position : Vector3.zero; }
 		}
 
 		public Animator Anim
